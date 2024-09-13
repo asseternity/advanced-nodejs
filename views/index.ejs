@@ -8,6 +8,23 @@
   <h1>hello world!</h1>
   <% if (user) { %>
     <h1>WELCOME BACK <%= user.username %></h1>
+    <h2>Your messages:</h2>
+    <% if (user.users_messages && user.users_messages.length > 0) { %>
+      <ul>
+        <% for (let i = 0; i < user.users_messages.length; i++) { %>
+          <li>
+            <%= user.users_messages[i].text %>
+          </li>
+        <% } %>
+      </ul>
+    <% } else { %>
+      <p>No messages found.</p>
+    <% } %>
+    <form action="/new-message" method="POST">
+      <label for="message_text">Message</label>
+      <input id="message_text" name="message_text" placeholder="Message Text" type="text" />
+      <button>Post Message</button>
+    </form>  
     <a href="/log-out">Log out</a>
   <% } else { %>
     <h1>please log in</h1>
