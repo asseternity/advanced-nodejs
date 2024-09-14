@@ -7,6 +7,7 @@ const pool = require('./db/pool');
 const app = express();
 const indexRoute = require('./routes/indexRoute')
 const signUpRoute = require('./routes/signUpRoute');
+const corsRoute = require('./routes/corsRoute');
 
 // settings
 app.set("views", path.join(__dirname, "views"));
@@ -66,6 +67,7 @@ passport.deserializeUser(async (id, done) => {
 // mount
 app.use('/', indexRoute);
 app.use('/sign-up', signUpRoute);
+app.use('/api', corsRoute);
 
 // launch
 const port = process.env.PORT || 3000;
