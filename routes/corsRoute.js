@@ -16,4 +16,4 @@ corsRoute.delete('/posts/:post_id', corsController.handleDeleteRequest);
 corsRoute.get('/posts', corsController.handleGetAllPosts);
 corsRoute.get('/posts/:post_id', corsController.handleGetPost);
 
-module.exports = corsRoute;
+module.exports = corsRoute; 
