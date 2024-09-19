@@ -1,7 +1,8 @@
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+const jwt = require('jsonwebtoken');
 
 handleDeleteUser = async (req, res, next) => {
     try {
@@ -43,9 +44,6 @@ handleGetOneUser = async (req, res, next) => {
 }
 
 handlePostUser = async (req, res, next) => {
-    console.log(`received data: username: ${req.body.username}, password: ${req.body.password}!`);
-    console.log(`Req.body:`);
-    console.log(req.body);
     try {
         const sameNameUser = await prisma.users.findFirst({
             where: {
@@ -54,12 +52,20 @@ handlePostUser = async (req, res, next) => {
         });
         if (!sameNameUser) {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            await prisma.users.create({
+            const createdUser = await prisma.users.create({
                 data: {
                     username: req.body.username,
                     password: hashedPassword
                 }
             });
+
+            // // API security
+            // jwt.sign({user: createdUser}, 'secretkey', (err, token) => {
+            //     res.json({
+            //         token: token
+            //     });
+            // });
+
             res.json({ msg: `User successfully created! Username: ${req.body.username}, password: ${hashedPassword}!` });
         } else {
             res.json({ msg: "Username already exists!" });
@@ -69,4 +75,26 @@ handlePostUser = async (req, res, next) => {
     }
 }
 
-module.exports = { handleDeleteUser, handleGetAllUsers, handleGetOneUser, handlePostUser }
+// Format of token is Authorization: Bearer <access_token>
+
+// Verify token
+verifyToken = (req, res, next) => {
+    // Get auth header value
+    const bearerHeader = req.headers['authorization'];
+    // Check if bearer is undefined
+    if (typeof bearerHeader !== undefined) {
+        // Split at the space to filter out the word 'bearer
+        const bearer = bearerHeader.split(' ');
+        // Get token from array
+        const bearerToken = bearer[1];
+        // Set the token
+        req.token = bearerToken;
+        // Next middleware
+        next();
+    } else {
+        // Forbidden
+        res.sendStatus(403);
+    }
+}
+
+module.exports = { handleDeleteUser, handleGetAllUsers, handleGetOneUser, handlePostUser, verifyToken }
