@@ -1,19 +1,19 @@
 const express = require('express');
-const cors = require('cors');
 const corsController = require('../controllers/corsController');
-
 const corsRoute = express.Router();
 
 // enable CORS
+const cors = require('cors');
 corsRoute.use(cors());
 
 // Handle pre-flight request for DELETE and other complex requests
-corsRoute.options('/posts/:post_id', cors()); // Pre-flight for specific route
-corsRoute.options('/posts', cors()); // Pre-flight for all posts route
+corsRoute.options('/users/:user_id', cors()); // Pre-flight for specific route
+corsRoute.options('/users', cors()); // Pre-flight for all posts route
 
 // routes
-corsRoute.delete('/posts/:post_id', corsController.handleDeleteRequest);
-corsRoute.get('/posts', corsController.handleGetAllPosts);
-corsRoute.get('/posts/:post_id', corsController.handleGetPost);
+corsRoute.delete('/users/:user_id', corsController.handleDeleteUser);
+corsRoute.get('/users', corsController.handleGetAllUsers);
+corsRoute.get('/users/:user_id', corsController.handleGetOneUser);
+corsRoute.post('/users/', corsController.handlePostUser);
 
 module.exports = corsRoute; 

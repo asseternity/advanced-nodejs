@@ -13,6 +13,13 @@ const corsRoute = require('./routes/corsRoute');
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
+
+// custom application-level middleware
+app.use((req, res, next) => {
+    console.log('Logging request body');
+    console.log(req.body);
+});
 
 // ***authentication with passport.js (and its dependency express-session)
 const session = require('express-session');
